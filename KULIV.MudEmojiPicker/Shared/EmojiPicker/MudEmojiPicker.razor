@@ -1,0 +1,121 @@
+﻿@namespace KULIV.MudEmojiPicker.Shared.EmojiPicker
+@using KULIV.MudEmojiPicker.Data
+@using MudBlazor
+
+@using ChangeEventArgs = Microsoft.AspNetCore.Components.ChangeEventArgs
+@inject EmojiService _emojiService
+@inject HttpClient Http
+
+<input name="Emoji" @bind="@Value" hidden/>
+
+
+<MudIconButton @onclick="ClickHandler" Icon="@_emojiService.GetSvgValue(Value)"/> 
+
+
+    <MudDialog @bind-IsVisible="dialogVisible"
+               Options="_dialogOptions"
+               ContentStyle="padding: 0"
+               Style="" >
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                Emoji Picker
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+        @if (emojiGroups == null)
+        {
+            <MudText> LOADING</MudText>
+        }
+        else
+        {
+            <MudTabs
+                Elevation="2"
+                Rounded="true"
+                Outlined="true"
+                MinimumTabWidth="36px"
+                HideSlider="true">
+                @foreach (var emojiList in emojiGroups)
+                {
+                    <EmojiRender
+                        Emojis="emojiList.emojiList"
+                        Title="@emojiList.emojiList[0].unicode"
+                        @bind-Value="Value" @bind-Value:after="OnValueChanged">
+                    </EmojiRender>
+                }
+            </MudTabs>
+        }
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Error" OnClick="() => dialogVisible = false">Close</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+
+
+
+@code {
+    
+    private DialogOptions _dialogOptions = new() { FullScreen = false };
+    
+    private float _iconCardHeight = 36; // single icon card height includin margins
+    
+    private EmojiGroup[]? emojiGroups;
+    
+    [Parameter]
+    public string Value { get; set; } = "🙂";
+
+    private string _emoji = "";
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        _emojiService.GetSvgValue(Value);
+        base.OnInitialized();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        emojiGroups = await Http.GetFromJsonAsync<EmojiGroup[]>("emoji-data/emoji-all-groups.json");
+        emojiGroups = emojiGroups.Select(emojiGroup =>
+        {
+            emojiGroup.emojiList.Select(emojiList =>
+            {
+                emojiList.svg = _emojiService.GetSvgValue(emojiList.unicode);
+                if (emojiList.skins != null)
+                {
+                    emojiList.skins.Insert(0,new Skin(){svg = emojiList.svg, unicode = emojiList.unicode});
+                    emojiList.skins = emojiList.skins.Select(skin =>
+                    {
+                        skin.svg = _emojiService.GetSvgValue(skin.unicode);
+                        return skin;
+                    }).Where(emoji => emoji.svg != _emojiService.emptyEmoji).ToList();
+                }
+                return emojiList;
+            }).Where(emoji => emoji.svg != _emojiService.emptyEmoji).ToList();
+            return emojiGroup;
+        }).ToArray();
+    }
+
+    private async Task OnValueChanged(ChangeEventArgs e)
+    {
+       // Value = e.Value.ToString();
+        await ValueChanged.InvokeAsync(Value);
+        dialogVisible = false;
+       // StateHasChanged();
+    }
+    
+    string activeClass = "e-active";
+    private bool dialogVisible { get; set; }
+
+    
+    private async Task ClickHandler()
+    {
+        dialogVisible = true;
+    }
+    
+    
+    
+
+}

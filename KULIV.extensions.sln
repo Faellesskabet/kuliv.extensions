@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KULIV.MudEmojiPicker", "KULIV.MudEmojiPicker\KULIV.MudEmojiPicker.csproj", "{32287923-BE62-4D94-9421-E94DC9626DBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{32287923-BE62-4D94-9421-E94DC9626DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32287923-BE62-4D94-9421-E94DC9626DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32287923-BE62-4D94-9421-E94DC9626DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32287923-BE62-4D94-9421-E94DC9626DBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

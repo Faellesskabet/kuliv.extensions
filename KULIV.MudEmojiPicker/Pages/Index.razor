@@ -1,0 +1,17 @@
+﻿@page "/"
+@inject EmojiService EmojiService;
+@using KULIV.MudEmojiPicker.Data
+@using KULIV.MudEmojiPicker.Shared.EmojiPicker;
+
+<PageTitle>Index</PageTitle>
+
+<MudIcon Icon="@EmojiService.GetSvgValue("🤣")"></MudIcon>
+<MudIcon Icon="@Twemoji.E1f0cf"></MudIcon>
+<MudEmojiPicker @bind-Value="@EmojiValue"/>
+
+
+@code
+{
+    private string EmojiValue { get; set; } = "🤣";
+}
+
